@@ -74,7 +74,7 @@
         android:id="@+id/hybrid"
         android:fragment="com.android.settings.beerbong.HybridSettings"
         android:title="@string/title_hybridsettings"
-        android:icon="@drawable/ic_xy_settings_jellybeer" />
+        android:icon="@drawable/ic_settings_jellybeer" />
 
     <!-- TRDS -->
     <header
