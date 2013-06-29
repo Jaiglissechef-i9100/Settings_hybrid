@@ -1680,6 +1680,20 @@
         <item>@string/circle_battery</item>
         <item>@string/circle_battery_w_percent</item>
         <item>@string/circle_dotted_w_percent</item>
+	<item>@string/fbar_battery</item>
+	<item>@string/bluebox_battery</item>
+	<item>@string/bubble_battery</item>
+	<item>@string/circle_jb</item>
+	<item>@string/digit_battery</item>
+	<item>@string/droid_battery</item>
+	<item>@string/bar_battery</item>
+	<item>@string/honey_battery</item>
+	<item>@string/gear_battery</item>
+	<item>@string/genx_battery</item>
+	<item>@string/gauge_battery</item>
+	<item>@string/jauge_battery</item>
+	<item>@string/numbers_battery</item>
+	<item>@string/crb_battery</item>
         <item>@string/speed_battery</item>
         <item>@string/square_battery</item>
         <item>@string/gear_battery</item>
@@ -1700,6 +1714,20 @@
         <item>9</item>
         <item>10</item>
         <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+        <item>16</item>
+        <item>17</item>
+        <item>18</item>
+        <item>19</item>
+        <item>20</item>
+        <item>21</item>
+        <item>22</item>
+        <item>23</item>
+        <item>24</item>
+        <item>25</item>
     </string-array>
 
     <string-array name="circle_battery_animation_speed_entries" >
