@@ -42,6 +42,7 @@ import android.preference.PreferenceScreen;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.util.ExtendedPropertiesUtils;
 import android.util.Log;
 import android.util.StateSet;
 import android.util.TypedValue;
@@ -59,6 +60,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +76,7 @@ import com.android.settings.SettingsActivity;
 import com.android.settings.util.ShortcutPickerHelper;
 import com.android.settings.widgets.SeekBarPreference;
 import com.android.settings.carbon.NavRingTargets;
+import com.android.settings.beerbong.Applications; 
 
 import net.margaritov.preference.colorpicker.ColorPickerPreference;
 
@@ -89,9 +93,9 @@ public class Navbar extends SettingsPreferenceFragment implements
     private static final String PREF_GLOW_TIMES = "glow_times";
     private static final String PREF_NAVBAR_QTY = "navbar_qty";
     private static final String ENABLE_NAVIGATION_BAR = "enable_nav_bar";
-    private static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
-    private static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
-    private static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
+//    private static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
+//    private static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
+//    private static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
     private static final String NAVIGATION_BAR_WIDGETS = "navigation_bar_widgets";
     private static final String PREF_MENU_ARROWS = "navigation_bar_menu_arrow_keys";
     private static final String NAVBAR_HIDE_ENABLE = "navbar_hide_enable";
@@ -119,7 +123,7 @@ public class Navbar extends SettingsPreferenceFragment implements
     ListPreference mNavigationBarHeightLandscape;
     ListPreference mNavigationBarWidth;
     SeekBarPreference mButtonAlpha;
-	Preference mWidthHelp;
+    Preference mWidthHelp;
     SeekBarPreference mWidthPort;
     SeekBarPreference mWidthLand;
     CheckBoxPreference mMenuArrowKeysCheckBox;
@@ -128,6 +132,7 @@ public class Navbar extends SettingsPreferenceFragment implements
     ListPreference mNavBarHideTimeout;
     SeekBarPreference mDragHandleOpacity;
     SeekBarPreference mDragHandleWidth;
+    Preference mNavbarHeight;
 
     // NavBar Buttons Stuff
     Resources mResources;
@@ -246,15 +251,12 @@ public class Navbar extends SettingsPreferenceFragment implements
         mWidthLand.setInitValue((int) (defaultLand * 2.5f));
         mWidthLand.setOnPreferenceChangeListener(this);
 
-        mNavigationBarHeight = (ListPreference) findPreference("navigation_bar_height");
-        mNavigationBarHeight.setOnPreferenceChangeListener(this);
-
-        mNavigationBarHeightLandscape = (ListPreference) findPreference("navigation_bar_height_landscape");
-        mNavigationBarHeightLandscape.setOnPreferenceChangeListener(this);
-
-        mNavigationBarWidth = (ListPreference) findPreference("navigation_bar_width");
-        mNavigationBarWidth.setOnPreferenceChangeListener(this);
         mConfigureWidgets = findPreference(NAVIGATION_BAR_WIDGETS);
+
+        boolean isTablet = ExtendedPropertiesUtils.isTablet();
+
+        mNavbarHeight = findPreference("navbar_height");
+        mNavbarHeight.setEnabled(!isTablet);
 
         mMenuArrowKeysCheckBox = (CheckBoxPreference) findPreference(PREF_MENU_ARROWS);
         mMenuArrowKeysCheckBox.setChecked(Settings.System.getBoolean(mContentRes,
@@ -266,11 +268,11 @@ public class Navbar extends SettingsPreferenceFragment implements
         }
         PreferenceGroup pg = (PreferenceGroup) prefs.findPreference("advanced_cat");
         if (isTabletUI(mContext)) {
-            mNavigationBarHeight.setTitle(R.string.system_bar_height_title);
-            mNavigationBarHeight.setSummary(R.string.system_bar_height_summary);
-            mNavigationBarHeightLandscape.setTitle(R.string.system_bar_height_landscape_title);
-            mNavigationBarHeightLandscape.setSummary(R.string.system_bar_height_landscape_summary);
-            pg.removePreference(mNavigationBarWidth);
+//            mNavigationBarHeight.setTitle(R.string.system_bar_height_title);
+//            mNavigationBarHeight.setSummary(R.string.system_bar_height_summary);
+//            mNavigationBarHeightLandscape.setTitle(R.string.system_bar_height_landscape_title);
+//            mNavigationBarHeightLandscape.setSummary(R.string.system_bar_height_landscape_summary);
+//            pg.removePreference(mNavigationBarWidth);
             mNavBarHideEnable.setTitle(R.string.systembar_hide_enable_title);
             mNavBarHideTimeout.setTitle(R.string.title_systembar_timeout);
             mNavBarHideTimeout.setSummary(R.string.summary_systembar_timeout);
@@ -279,9 +281,9 @@ public class Navbar extends SettingsPreferenceFragment implements
             pg.removePreference(mWidthLand);
             pg.removePreference(mWidthHelp);
             if (isPhabletUI(mContext)) { // Phablets don't have NavBar onside 
-                pg.removePreference(mNavigationBarWidth);
+//                pg.removePreference(mNavigationBarWidth);
             } else {
-                pg.removePreference(mNavigationBarHeightLandscape);
+//                pg.removePreference(mNavigationBarHeightLandscape);
             }
         }
 
@@ -404,6 +406,8 @@ public class Navbar extends SettingsPreferenceFragment implements
                     Settings.System.NAVIGATION_BAR_MENU_ARROW_KEYS,
                     ((CheckBoxPreference) preference).isChecked());
             return true;
+        } else if (preference == mNavbarHeight) {
+            showNavbarHeightDialog();
         }
         return super.onPreferenceTreeClick(preferenceScreen, preference);
     }
@@ -422,32 +426,10 @@ public class Navbar extends SettingsPreferenceFragment implements
             Settings.System.putInt(mContentRes,
                     Settings.System.MENU_VISIBILITY, Integer.parseInt((String) newValue));
             return true;
-        } else if (preference == mNavigationBarWidth) {
-            String newVal = (String) newValue;
-            int dp = Integer.parseInt(newVal);
-            int width = mapChosenDpToPixels(dp);
-            Settings.System.putInt(mContentRes, Settings.System.NAVIGATION_BAR_WIDTH,
-                    width);
-            return true;
-        } else if (preference == mNavigationBarHeight) {
-            String newVal = (String) newValue;
-            int dp = Integer.parseInt(newVal);
-            int height = mapChosenDpToPixels(dp);
-            Settings.System.putInt(mContentRes, Settings.System.NAVIGATION_BAR_HEIGHT,
-                    height);
-            return true;
         } else if (preference == mNavBarHideTimeout) {
             int val = Integer.parseInt((String) newValue);
             Settings.System.putInt(mContentRes,
                     Settings.System.NAV_HIDE_TIMEOUT, val);
-            return true;
-        } else if (preference == mNavigationBarHeightLandscape) {
-            String newVal = (String) newValue;
-            int dp = Integer.parseInt(newVal);
-            int height = mapChosenDpToPixels(dp);
-            Settings.System.putInt(mContentRes,
-                    Settings.System.NAVIGATION_BAR_HEIGHT_LANDSCAPE,
-                    height);
             return true;
         } else if (preference == mNavigationColor) {
             String hex = ColorPickerPreference.convertToARGB(
@@ -554,6 +536,60 @@ public class Navbar extends SettingsPreferenceFragment implements
             mGlowTimes.setValueIndex(3);
         }
         mGlowTimes.setSummary(getResources().getString(resId));
+    }
+
+    private void showNavbarHeightDialog() {
+        Resources res = getResources();
+        String cancel = res.getString(R.string.cancel);
+        String ok = res.getString(R.string.ok);
+        String title = res.getString(R.string.navbar_height_title);
+        int savedProgress = Integer.parseInt(ExtendedPropertiesUtils
+                .getProperty("com.android.systemui.navbar.dpi")) / 5;
+
+        LayoutInflater factory = LayoutInflater.from(getActivity());
+        final View alphaDialog = factory.inflate(R.layout.seekbar_dpi_dialog, null);
+        SeekBar seekbar = (SeekBar) alphaDialog.findViewById(R.id.seek_bar);
+        final TextView seektext = (TextView) alphaDialog
+                .findViewById(R.id.seek_text);
+        OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekbar, int progress,
+                    boolean fromUser) {
+                mNavbarHeightProgress = seekbar.getProgress() * 5;
+                seektext.setText(mNavbarHeightProgress + "%");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekbar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekbar) {
+            }
+        };
+        seektext.setText((savedProgress * 5) + "%");
+        seekbar.setMax(20);
+        seekbar.setProgress(savedProgress);
+        seekbar.setOnSeekBarChangeListener(seekBarChangeListener);
+        new AlertDialog.Builder(getActivity())
+                .setTitle(title)
+                .setView(alphaDialog)
+                .setNegativeButton(cancel,
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,
+                                    int which) {
+                                // nothing
+                            }
+                        })
+                .setPositiveButton(ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Applications.addProperty(mContext,
+                                "com.android.systemui.navbar.dpi",
+                                mNavbarHeightProgress, true);
+                    }
+                }).create().show();
     }
 
     public int mapChosenDpToPixels(int dp) {

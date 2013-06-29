@@ -1583,6 +1583,16 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".beerbong.HybridSettings"
+            android:label="@string/title_hybridsettings" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="com.android.settings.SHORTCUT" />
+              </intent-filter>
+        </activity>
+
         <activity android:name="Settings$PieActivity"
                 android:label="@string/pie_controls_title"
                 android:taskAffinity=""
@@ -1654,14 +1664,6 @@
         <activity android:name=".profiles.NFCProfileSelect" />
 
         <activity android:name=".profiles.WifiTriggers" />
-
-        <activity
-            android:name=".carbon.DensityChanger"
-            android:label="@string/lcd_density_wizard" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-            </intent-filter>
-        </activity>
 
         <activity android:name="Settings$ASSRamBarActivity"
                 android:label="@string/ram_bar">

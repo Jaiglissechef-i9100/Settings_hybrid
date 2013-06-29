@@ -100,18 +100,17 @@ public class SettingsPreferenceFragment extends PreferenceFragment implements Di
         return 0;
     }
 
-    public static boolean isTabletUI(Context context) {
+    public static boolean isTablet(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.CURRENT_UI_MODE,0) == 1;
+                Settings.System.CURRENT_UI_MODE, 0) == 1;
     }
 
-    public static boolean isPhabletUI(Context context) {
+    public static boolean isPhablet(Context context) {
         return Settings.System.getInt(context.getContentResolver(),
-                Settings.System.CURRENT_UI_MODE,0) == 2;
+                Settings.System.CURRENT_UI_MODE, 0) == 2;
     }
 
-    public static boolean hasPhoneAbility(Context context)
-    {
+    public static boolean hasPhoneAbility(Context context) {
        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
        if(telephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE)
            return false;

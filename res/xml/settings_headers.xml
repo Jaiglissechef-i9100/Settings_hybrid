@@ -69,6 +69,13 @@
         android:title="@string/carbon_settings_title"
         android:fragment="com.android.settings.carbon.CarbonSettings" />
 
+    <!-- Hybrid Settings -->
+    <header
+        android:id="@+id/hybrid"
+        android:fragment="com.android.settings.beerbong.HybridSettings"
+        android:title="@string/title_hybridsettings"
+        android:icon="@drawable/ic_xy_settings_jellybeer" />
+
     <!-- TRDS -->
     <header
         android:id="@+id/trds_settings"
@@ -131,6 +138,17 @@
         android:icon="@drawable/ic_settings_applications"
         android:title="@string/applications_settings"
         android:id="@+id/application_settings" />
+
+    <!-- SLIM Cleaner -->
+    <header
+        android:id="@+id/cleaner"
+        android:title="@string/slim_cleaner"
+        android:icon="@drawable/ic_settings_slimcleaner">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.slim.cleaner"
+            android:targetClass="com.slim.cleaner.SlimCleaner" />
+    </header>
 
     <!-- Manage users -->
     <header
