@@ -93,9 +93,6 @@ public class Navbar extends SettingsPreferenceFragment implements
     private static final String PREF_GLOW_TIMES = "glow_times";
     private static final String PREF_NAVBAR_QTY = "navbar_qty";
     private static final String ENABLE_NAVIGATION_BAR = "enable_nav_bar";
-//    private static final String NAVIGATION_BAR_HEIGHT = "navigation_bar_height";
-//    private static final String NAVIGATION_BAR_HEIGHT_LANDSCAPE = "navigation_bar_height_landscape";
-//    private static final String NAVIGATION_BAR_WIDTH = "navigation_bar_width";
     private static final String NAVIGATION_BAR_WIDGETS = "navigation_bar_widgets";
     private static final String PREF_MENU_ARROWS = "navigation_bar_menu_arrow_keys";
     private static final String NAVBAR_HIDE_ENABLE = "navbar_hide_enable";
